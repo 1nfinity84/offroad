@@ -1,0 +1,985 @@
+/* ==========================================================================
+   EXTREME OFFROAD — MINIMALIST EDITORIAL DESIGN (Inspired by Sunrace)
+   Fonts: Sofia Sans Extra Condensed + Jost | Palette: #1C110E, #F4EDE4, #EE3800
+   ========================================================================== */
+
+:root {
+    --main: #ee3800;
+    --main-hover: #d12f00;
+    --amber: #e0b635;
+    --black: #1c110e;
+    --black-soft: #2a1d19;
+    --sand: #f4ede4;
+    --sand-dark: #e6dccf;
+    --white: #ffffff;
+    --text-dark: #1c110e;
+    --text-muted: #6e6259;
+    --text-light: #f4ede4;
+    --text-light-muted: rgba(244, 237, 228, 0.72);
+    --border-light: rgba(28, 17, 14, 0.1);
+    --border-dark: rgba(255, 255, 255, 0.12);
+
+    --font-main: 'Jost', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-headers: 'Sofia Sans Extra Condensed', sans-serif;
+
+    --header-initial: 92px;
+    --header-compact: 68px;
+    --container: 1320px;
+    --radius-lg: 24px;
+    --radius-md: 16px;
+    --radius-pill: 999px;
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    background-color: var(--sand);
+    color: var(--text-dark);
+    font-family: var(--font-main);
+    font-size: 16px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+}
+
+body {
+    margin: 0;
+    background-color: var(--sand);
+    color: var(--text-dark);
+    /* clip (not hidden) so body never becomes a scroll container — keeps position: sticky working */
+    overflow-x: clip;
+}
+
+/* ==========================================================================
+   MATERIAL SYMBOLS OUTLINED
+   ========================================================================== */
+.material-symbols-outlined {
+    font-family: 'Material Symbols Outlined';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 1.2em;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    vertical-align: middle;
+    flex-shrink: 0;
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+.icon-sm { font-size: 1.05rem; }
+.icon-md { font-size: 1.3rem; }
+.icon-lg { font-size: 1.75rem; }
+.icon-xl { font-size: 2.4rem; }
+
+/* ==========================================================================
+   HEADER (Transparent over Hero -> Solid Espresso on Scroll)
+   ========================================================================== */
+@keyframes shrink-header {
+    from {
+        height: var(--header-initial);
+        background-color: rgba(28, 17, 14, 0.15);
+        backdrop-filter: blur(4px);
+    }
+    to {
+        height: var(--header-compact);
+        background-color: rgba(28, 17, 14, 0.96);
+        backdrop-filter: blur(16px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+    }
+}
+
+header.eo-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    height: var(--header-initial);
+    background-color: rgba(28, 17, 14, 0.88);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    align-items: center;
+    transition: background-color 0.25s ease, transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+header.eo-header.is-hidden {
+    transform: translate3d(0, -100%, 0);
+}
+
+@supports ((animation-timeline: scroll()) and (animation-range: 0% 100%)) {
+    header.eo-header {
+        animation: shrink-header linear both;
+        animation-timeline: scroll();
+        animation-range: 0px 80px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        header.eo-header {
+            animation: none;
+            height: var(--header-compact);
+            background-color: rgba(28, 17, 14, 0.96);
+        }
+    }
+}
+
+.eo-header-inner {
+    width: 100%;
+    max-width: var(--container);
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+}
+
+.eo-brand {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.eo-brand img {
+    max-height: 42px;
+    width: auto;
+    display: block;
+}
+
+.eo-nav {
+    display: flex;
+    align-items: center;
+    gap: 1.75rem;
+}
+
+.eo-nav-link {
+    color: var(--white);
+    text-decoration: none;
+    font-size: 0.92rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    transition: color 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.eo-nav-link:hover {
+    color: var(--main);
+}
+
+.eo-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.eo-header-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--white);
+    border: none;
+    padding: 0.55rem 1.1rem;
+    border-radius: var(--radius-pill);
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.eo-header-btn:hover {
+    background: var(--main);
+    color: var(--white);
+}
+
+.eo-header-btn-cart {
+    background: var(--main);
+    color: var(--white);
+    font-weight: 600;
+}
+
+.eo-header-btn-cart:hover {
+    background: var(--main-hover);
+}
+
+.eo-mobile-menu-btn {
+    display: none;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: var(--white);
+    padding: 0.5rem 0.85rem;
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    font-family: inherit;
+}
+
+/* ==========================================================================
+   FULL-SCREEN MINIMALIST HERO (SUNRACE STYLE)
+   ========================================================================== */
+.eo-hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-end;
+    padding: 9rem 0 4.5rem;
+    background-color: var(--black);
+    color: var(--white);
+    overflow: clip;
+}
+
+.eo-hero-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.eo-hero-bg img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 45%;
+    transform: scale(1.04);
+}
+
+.eo-hero-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background:
+        linear-gradient(180deg, rgba(28, 17, 14, 0.55) 0%, rgba(28, 17, 14, 0.18) 40%, rgba(28, 17, 14, 0.88) 92%, var(--black) 100%),
+        radial-gradient(circle at 20% 70%, rgba(28, 17, 14, 0.65) 0%, transparent 60%);
+}
+
+.eo-container {
+    position: relative;
+    z-index: 3;
+    width: 100%;
+    max-width: var(--container);
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.eo-hero-layout {
+    display: grid;
+    grid-template-columns: 1.25fr 0.75fr;
+    gap: 3rem;
+    align-items: end;
+    padding-bottom: 3.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.eo-subtag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--main);
+    margin-bottom: 1rem;
+}
+
+.eo-hero-title {
+    font-family: var(--font-headers);
+    font-size: clamp(3.8rem, 7.8vw, 7.2rem);
+    font-weight: 800;
+    font-style: italic;
+    line-height: 0.88;
+    letter-spacing: -1px;
+    text-transform: uppercase;
+    margin: 0;
+    color: var(--white);
+}
+
+.eo-hero-title span:not(.eo-line):not(.eo-line-inner) {
+    color: var(--amber);
+}
+
+.eo-hero-desc {
+    font-size: 1.12rem;
+    color: rgba(255, 255, 255, 0.84);
+    margin: 0 0 2rem;
+    line-height: 1.65;
+}
+
+/* Stats Row at Bottom of Hero (Sunrace Countup Style) */
+.eo-hero-stats {
+    padding-top: 2.5rem;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
+}
+
+.eo-stat-number {
+    font-family: var(--font-headers);
+    font-size: clamp(2.6rem, 4.2vw, 3.8rem);
+    font-weight: 800;
+    font-style: italic;
+    line-height: 1;
+    color: var(--white);
+}
+
+.eo-stat-number {
+    font-variant-numeric: tabular-nums;
+}
+
+.eo-stat-number .eo-unit {
+    color: var(--main);
+}
+
+.eo-stat-label {
+    font-size: 0.88rem;
+    color: rgba(255, 255, 255, 0.65);
+    margin-top: 0.25rem;
+}
+
+/* ==========================================================================
+   BUTTONS (CLEAN PILLS, ZERO GOLD BOXES)
+   ========================================================================== */
+.eo-btn-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+}
+
+.eo-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    background: var(--main);
+    color: var(--white);
+    font-family: var(--font-main);
+    font-size: 0.92rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 1rem 2rem;
+    border-radius: var(--radius-pill);
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.25s ease, transform 0.25s ease;
+}
+
+.eo-btn-primary:hover {
+    background: var(--main-hover);
+    transform: translateY(-2px);
+}
+
+.eo-btn-outline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+    background: transparent;
+    color: inherit;
+    font-family: var(--font-main);
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 0.95rem 1.85rem;
+    border-radius: var(--radius-pill);
+    border: 1px solid currentColor;
+    cursor: pointer;
+    transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+}
+
+.eo-btn-outline:hover {
+    background: var(--main);
+    border-color: var(--main);
+    color: var(--white);
+}
+
+.eo-action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: rgba(28, 17, 14, 0.06);
+    color: var(--text-dark);
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: var(--radius-pill);
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.eo-action-btn:hover,
+.eo-action-btn.active {
+    background: var(--main);
+    color: var(--white);
+}
+
+/* ==========================================================================
+   EDITORIAL MARQUEE STRIP (SUNRACE SIGNATURE ELEMENT)
+   ========================================================================== */
+@keyframes marquee-scroll {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+}
+
+.eo-marquee {
+    background: var(--black);
+    color: rgba(255, 255, 255, 0.14);
+    padding: 1.6rem 0;
+    overflow: hidden;
+    white-space: nowrap;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.eo-marquee-track {
+    display: inline-flex;
+    align-items: center;
+    /* no gap: each item carries its own trailing padding so translating by exactly
+       half the track width loops seamlessly */
+    animation: marquee-scroll 28s linear infinite;
+    will-change: transform;
+}
+
+.eo-marquee-item {
+    font-family: var(--font-headers);
+    font-size: clamp(2.8rem, 5vw, 4.5rem);
+    font-weight: 800;
+    font-style: italic;
+    text-transform: uppercase;
+    letter-spacing: -1px;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: 2.5rem;
+    padding-right: 2.5rem;
+}
+
+.eo-marquee-item span {
+    color: var(--main);
+}
+
+/* ==========================================================================
+   SECTIONS & EDITORIAL TYPOGRAPHY
+   ========================================================================== */
+.eo-section {
+    padding: 7rem 0;
+    position: relative;
+}
+
+.eo-section-sand {
+    background-color: var(--sand);
+    color: var(--text-dark);
+}
+
+.eo-section-white {
+    background-color: var(--white);
+    color: var(--text-dark);
+}
+
+.eo-section-dark {
+    background-color: var(--black);
+    color: var(--white);
+}
+
+.eo-section-header {
+    max-width: 760px;
+    margin-bottom: 4rem;
+}
+
+.eo-section-header-center {
+    max-width: 760px;
+    margin: 0 auto 4rem;
+    text-align: center;
+}
+
+.eo-section-title {
+    font-family: var(--font-headers);
+    font-size: clamp(2.8rem, 5.2vw, 4.6rem);
+    font-weight: 800;
+    font-style: italic;
+    line-height: 0.92;
+    letter-spacing: -1px;
+    text-transform: uppercase;
+    margin: 0 0 1.25rem;
+}
+
+.eo-section-title span:not(.eo-line):not(.eo-line-inner) {
+    color: var(--main);
+}
+
+.eo-lead {
+    font-size: 1.12rem;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+.eo-section-dark .eo-lead {
+    color: var(--text-light-muted);
+}
+
+.eo-grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 4rem;
+    align-items: center;
+}
+
+.eo-grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2.25rem;
+}
+
+/* ==========================================================================
+   MINIMALIST CARDS & PARALLAX MEDIA CONTAINERS
+   ========================================================================== */
+.eo-media-rounded {
+    position: relative;
+    border-radius: var(--radius-lg);
+    overflow: clip;
+    background: var(--black);
+    box-shadow: 0 20px 50px rgba(28, 17, 14, 0.12);
+}
+
+.eo-media-rounded img,
+.eo-media-rounded video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Extra scale gives the scroll parallax (motion.css) room to travel without exposing edges */
+.eo-media-rounded img {
+    transform: scale(1.16);
+}
+
+.eo-card-minimal {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 12px 36px rgba(28, 17, 14, 0.06);
+}
+
+.eo-section-white .eo-card-minimal {
+    background: var(--sand);
+    box-shadow: none;
+}
+
+.eo-section-dark .eo-card-minimal {
+    background: var(--black-soft);
+    color: var(--white);
+}
+
+.eo-card-minimal:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 24px 48px rgba(28, 17, 14, 0.12);
+}
+
+.eo-card-media {
+    height: 260px;
+    overflow: clip;
+    position: relative;
+}
+
+.eo-card-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s ease;
+}
+
+.eo-card-minimal:hover .eo-card-media img {
+    transform: scale(1.06);
+}
+
+.eo-card-body {
+    padding: 2rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.eo-card-title {
+    font-family: var(--font-headers);
+    font-size: 1.85rem;
+    font-weight: 800;
+    font-style: italic;
+    text-transform: uppercase;
+    line-height: 1.05;
+    margin: 0 0 0.75rem;
+}
+
+/* Clean Check List */
+.eo-check-list {
+    list-style: none;
+    padding: 0;
+    margin: 1.5rem 0;
+}
+
+.eo-check-list li {
+    position: relative;
+    padding-left: 2rem;
+    margin-bottom: 0.85rem;
+    font-size: 1.02rem;
+}
+
+.eo-check-list li::before {
+    content: 'check_circle';
+    font-family: 'Material Symbols Outlined';
+    position: absolute;
+    left: 0;
+    top: 0.1rem;
+    color: var(--main);
+    font-size: 1.25rem;
+    line-height: 1;
+}
+
+/* ==========================================================================
+   FULL-BLEED PARALLAX BANNER
+   ========================================================================== */
+.eo-parallax-banner {
+    position: relative;
+    min-height: 460px;
+    display: flex;
+    align-items: center;
+    background: var(--black);
+    color: var(--white);
+    overflow: clip;
+}
+
+.eo-parallax-banner-bg {
+    position: absolute;
+    inset: -12% 0;
+    z-index: 1;
+}
+
+.eo-parallax-banner-bg img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scale(1.04);
+}
+
+.eo-parallax-banner-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background: linear-gradient(90deg, rgba(28, 17, 14, 0.9) 0%, rgba(28, 17, 14, 0.45) 60%, rgba(28, 17, 14, 0.75) 100%);
+}
+
+/* ==========================================================================
+   MINIMALIST SPEC LIST & NUMBERED STEPS
+   ========================================================================== */
+.eo-spec-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin: 2rem 0;
+    padding: 1.75rem 0;
+    border-top: 1px solid var(--border-dark);
+    border-bottom: 1px solid var(--border-dark);
+}
+
+.eo-spec-val {
+    font-family: var(--font-headers);
+    font-size: 2.6rem;
+    font-weight: 800;
+    font-style: italic;
+    line-height: 1;
+    color: var(--amber);
+}
+
+.eo-spec-label {
+    font-size: 0.85rem;
+    color: var(--text-light-muted);
+    margin-top: 0.25rem;
+}
+
+.eo-step-item {
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.eo-step-item:last-child {
+    border-bottom: none;
+}
+
+.eo-step-number {
+    font-family: var(--font-headers);
+    font-size: 2.8rem;
+    font-weight: 800;
+    font-style: italic;
+    line-height: 0.9;
+    color: var(--main);
+    min-width: 48px;
+}
+
+/* ==========================================================================
+   VOUCHER GOLD SHOWCASE & CHECKOUT PANEL
+   ========================================================================== */
+.eo-voucher-showcase {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    padding: 3.5rem;
+    box-shadow: 0 24px 60px rgba(28, 17, 14, 0.08);
+}
+
+.eo-glass-panel {
+    background: var(--white);
+    color: var(--text-dark);
+    border-radius: var(--radius-lg);
+    padding: 2.5rem;
+    box-shadow: 0 16px 44px rgba(28, 17, 14, 0.06);
+}
+
+.eo-section-dark .eo-glass-panel {
+    background: var(--black-soft);
+    color: var(--white);
+}
+
+.eo-price-tag {
+    font-family: var(--font-headers);
+    font-size: 3.8rem;
+    font-weight: 800;
+    font-style: italic;
+    line-height: 1;
+    color: var(--main);
+}
+
+.eo-stock-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.9rem;
+    border-radius: var(--radius-pill);
+    background: rgba(34, 197, 94, 0.12);
+    color: #15803d;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+/* ==========================================================================
+   FAQ ACCORDION
+   ========================================================================== */
+.eo-faq-item {
+    background: var(--white);
+    border-radius: var(--radius-md);
+    margin-bottom: 0.85rem;
+    overflow: hidden;
+    transition: box-shadow 0.2s ease;
+}
+
+.eo-faq-item[open] {
+    box-shadow: 0 12px 32px rgba(28, 17, 14, 0.08);
+}
+
+.eo-faq-item summary {
+    padding: 1.35rem 1.75rem;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1.08rem;
+    color: var(--text-dark);
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.eo-faq-item summary::-webkit-details-marker {
+    display: none;
+}
+
+.eo-faq-chevron {
+    color: var(--main);
+    transition: transform 0.25s ease;
+}
+
+.eo-faq-item[open] .eo-faq-chevron {
+    transform: rotate(180deg);
+}
+
+.eo-faq-answer {
+    padding: 0 1.75rem 1.5rem;
+    color: var(--text-muted);
+}
+
+/* ==========================================================================
+   FORMS & DIALOGS
+   ========================================================================== */
+.eo-input,
+.eo-textarea,
+.eo-select {
+    width: 100%;
+    background: var(--sand);
+    border: 1px solid rgba(28, 17, 14, 0.14);
+    color: var(--text-dark);
+    padding: 0.85rem 1.1rem;
+    border-radius: 12px;
+    font-family: var(--font-main);
+    font-size: 0.95rem;
+    transition: border-color 0.2s ease;
+}
+
+.eo-input:focus,
+.eo-textarea:focus,
+.eo-select:focus {
+    outline: none;
+    border-color: var(--main);
+}
+
+.eo-label {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 0.35rem;
+}
+
+dialog.eo-dialog {
+    background: var(--white);
+    color: var(--text-dark);
+    border: none;
+    border-radius: var(--radius-lg);
+    padding: 0;
+    max-width: 660px;
+    width: calc(100% - 2rem);
+    box-shadow: 0 30px 90px rgba(0, 0, 0, 0.45);
+}
+
+dialog.eo-dialog::backdrop {
+    background: rgba(28, 17, 14, 0.72);
+    backdrop-filter: blur(6px);
+}
+
+.eo-dialog-inner {
+    padding: 2.5rem;
+    max-height: 85vh;
+    overflow-y: auto;
+}
+
+.eo-dialog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-light);
+    padding-bottom: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+/* ==========================================================================
+   FOOTER & COOKIE BAR
+   ========================================================================== */
+.eo-footer {
+    background: var(--black);
+    color: rgba(255, 255, 255, 0.7);
+    padding: 5rem 0 3.5rem;
+    font-size: 0.92rem;
+}
+
+.eo-footer a {
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.eo-footer a:hover {
+    color: var(--main);
+}
+
+.eo-cookie-bar {
+    position: fixed;
+    bottom: 1.25rem;
+    left: 1.25rem;
+    z-index: 95;
+    max-width: 520px;
+    background: var(--black);
+    color: var(--white);
+    border-radius: var(--radius-md);
+    padding: 1.1rem 1.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+}
+
+/* ==========================================================================
+   RESPONSIVE DESIGN
+   ========================================================================== */
+@media (max-width: 1080px) {
+    .eo-hero-layout,
+    .eo-grid-2,
+    .eo-grid-3 {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+    }
+
+    .eo-hero-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .eo-nav {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: var(--black);
+        flex-direction: column;
+        padding: 1.5rem;
+        gap: 1rem;
+    }
+
+    .eo-nav.is-open {
+        display: flex;
+    }
+
+    .eo-mobile-menu-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .eo-section {
+        padding: 4.5rem 0;
+    }
+
+    .eo-voucher-showcase,
+    .eo-glass-panel {
+        padding: 1.75rem;
+    }
+
+    .eo-spec-row {
+        grid-template-columns: 1fr;
+    }
+
+    .eo-cookie-bar {
+        right: 1.25rem;
+        flex-direction: column;
+        align-items: stretch;
+    }
+}

@@ -1,0 +1,536 @@
+/* ==========================================================================
+   EXTREME OFFROAD — MOTION, SCROLL CHOREOGRAPHY & PARALLAX ARCHITECTURE
+   Pure GPU-accelerated transforms & opacity (60fps + prefers-reduced-motion)
+   ========================================================================== */
+
+:root {
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+    --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* ==========================================================================
+   1. TOP READING / SCROLL PROGRESS BAR (.eo-scroll-progress)
+   ========================================================================== */
+.eo-scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    z-index: 120;
+    background: linear-gradient(90deg, var(--main) 0%, var(--amber) 100%);
+    transform-origin: 0 50%;
+    transform: scaleX(var(--fx-p, 0));
+    pointer-events: none;
+    will-change: transform;
+}
+
+@keyframes fx-doc-progress {
+    from { transform: scaleX(0); }
+    to   { transform: scaleX(1); }
+}
+
+@supports ((animation-timeline: scroll()) and (animation-range: 0% 100%)) {
+    .eo-scroll-progress {
+        animation: fx-doc-progress linear both;
+        animation-timeline: scroll(root);
+        animation-range: 0% 100%;
+    }
+}
+
+/* ==========================================================================
+   2. HERO INTRO CHOREOGRAPHY, SPLIT-LINE REVEAL & SCROLL CUE
+   ========================================================================== */
+.eo-line {
+    display: block;
+    overflow: clip;
+    padding-bottom: 0.06em;
+    margin-bottom: -0.06em;
+}
+
+.eo-line-inner {
+    display: block;
+    will-change: transform;
+}
+
+/* Hero initial load choreography when JS is active */
+@keyframes fx-line-rise {
+    from {
+        transform: translate3d(0, 112%, 0) rotate(1.5deg);
+    }
+    to {
+        transform: translate3d(0, 0, 0) rotate(0deg);
+    }
+}
+
+@keyframes fx-intro-fade {
+    from {
+        opacity: 0;
+        transform: translate3d(0, 26px, 0);
+    }
+    to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+@keyframes fx-hero-zoom {
+    from {
+        transform: scale(1.14);
+        filter: brightness(0.65);
+    }
+    to {
+        transform: scale(1.04);
+        filter: brightness(1);
+    }
+}
+
+html.fx-js .eo-hero-title.is-split .eo-line-inner {
+    animation: fx-line-rise 1.05s var(--ease-out-expo) both;
+    animation-delay: calc(0.18s + var(--i, 0) * 0.13s);
+}
+
+html.fx-js .fx-intro {
+    animation: fx-intro-fade 0.95s var(--ease-out-expo) both;
+    animation-delay: var(--d, 0.3s);
+}
+
+/* Hero scroll-driven depth parallax */
+.fx-hero-img {
+    will-change: transform;
+    transform: translate3d(0, calc(var(--fx-p, 0) * 15%), 0) scale(calc(1.04 + var(--fx-p, 0) * 0.08));
+    transition: transform 0.08s linear;
+}
+
+.fx-hero-content {
+    will-change: transform, opacity;
+    transform: translate3d(0, calc(var(--fx-p, 0) * -38px), 0);
+    opacity: calc(1 - var(--fx-p, 0) * 0.55);
+}
+
+/* Editorial Scroll Cue in Hero */
+.eo-scroll-cue {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.85rem;
+    margin-top: 2.25rem;
+    color: rgba(255, 255, 255, 0.72);
+    text-decoration: none;
+    font-size: 0.76rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.24em;
+    transition: color 0.25s ease;
+}
+
+.eo-scroll-cue:hover {
+    color: var(--white);
+}
+
+.eo-scroll-cue-line {
+    position: relative;
+    width: 48px;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.22);
+    overflow: hidden;
+    display: inline-block;
+}
+
+.eo-scroll-cue-line::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--main);
+    transform-origin: 0 50%;
+    animation: fx-cue-pulse 2.2s var(--ease-in-out) infinite;
+}
+
+@keyframes fx-cue-pulse {
+    0%   { transform: translateX(-102%); }
+    50%  { transform: translateX(0%); }
+    100% { transform: translateX(102%); }
+}
+
+/* ==========================================================================
+   3. PINNED SCROLL-DRIVEN "DRIVE-BY" SCENE (#na-plny-plyn.eo-driveby)
+   The Can-Am Maverick X RS Turbo RR jumps across the arena on scroll
+   ========================================================================== */
+.eo-driveby {
+    position: relative;
+    height: 230vh;
+    background: var(--black);
+    color: var(--white);
+    /* Custom properties updated by js/motion.js (with sensible mid-jump defaults) */
+    --fx-p: 0.5;
+    --db-x: 0vw;
+    --db-y: -38px;
+    --db-rot: -2deg;
+    --db-scale: 1.04;
+    --db-shadow-scale: 0.84;
+}
+
+.eo-driveby-sticky {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    width: 100%;
+    overflow: clip;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 6.25rem 0 2.75rem;
+    isolation: isolate;
+}
+
+/* Layer 1: Arena Background with opposite horizontal pan + subtle zoom */
+.eo-driveby-bg {
+    position: absolute;
+    inset: -6%;
+    z-index: 1;
+    pointer-events: none;
+    will-change: transform;
+    transform: translate3d(calc((0.5 - var(--fx-p, 0.5)) * 7%), 0, 0) scale(calc(1.06 + var(--fx-p, 0.5) * 0.06));
+}
+
+.eo-driveby-bg img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 55%;
+    opacity: 0.42;
+    filter: contrast(1.08) saturate(0.92);
+}
+
+/* Layer 2: Cinematic Vignette Shade */
+.eo-driveby-shade {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    background:
+        linear-gradient(180deg, var(--black) 0%, rgba(28, 17, 14, 0.25) 26%, rgba(28, 17, 14, 0.22) 72%, var(--black) 100%),
+        radial-gradient(ellipse 75% 60% at 50% 54%, transparent 0%, rgba(28, 17, 14, 0.78) 100%);
+}
+
+/* Layer 3: Giant Editorial Watermark Typography drifting counter to buggy */
+.eo-driveby-bigtext {
+    position: absolute;
+    top: 52%;
+    left: 50%;
+    z-index: 3;
+    pointer-events: none;
+    white-space: nowrap;
+    font-family: var(--font-headers);
+    font-size: clamp(6.5rem, 19vw, 18.5rem);
+    font-weight: 800;
+    font-style: italic;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    line-height: 0.85;
+    color: transparent;
+    -webkit-text-stroke: 1.5px rgba(244, 237, 228, 0.14);
+    will-change: transform;
+    transform: translate3d(calc(-50% + (0.5 - var(--fx-p, 0.5)) * 28vw), -50%, 0);
+}
+
+/* Layer 4: Top Copy Header */
+.eo-driveby-copy {
+    position: relative;
+    z-index: 6;
+    pointer-events: none;
+}
+
+.eo-driveby-copy .eo-section-title {
+    margin-bottom: 0;
+    text-shadow: 0 12px 32px rgba(0, 0, 0, 0.55);
+}
+
+/* Layer 5: Ground Shadow beneath the jumping buggy */
+.eo-driveby-shadow {
+    position: absolute;
+    left: 50%;
+    bottom: 13%;
+    width: min(56vw, 620px);
+    height: 44px;
+    z-index: 3;
+    pointer-events: none;
+    background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.82) 0%, rgba(0, 0, 0, 0.35) 48%, transparent 75%);
+    filter: blur(10px);
+    will-change: transform, opacity;
+    transform: translate3d(calc(-50% + var(--db-x, 0vw)), 0, 0) scaleX(var(--db-shadow-scale, 0.85));
+    opacity: calc(0.45 + (1 - var(--db-shadow-scale, 0.85)) * 0.4);
+}
+
+/* Layer 6: Subtle Mud Spray trailing BEHIND the rear tires (never covering buggy) */
+.eo-driveby-mud {
+    position: absolute;
+    top: 56%;
+    left: 50%;
+    width: min(68vw, 760px);
+    z-index: 4;
+    pointer-events: none;
+    mix-blend-mode: screen;
+    opacity: calc(0.12 + sin(var(--fx-p, 0.5) * 3.14159) * 0.26);
+    -webkit-mask-image: radial-gradient(ellipse 46% 38% at 32% 58%, #000 0%, transparent 72%);
+    mask-image: radial-gradient(ellipse 46% 38% at 32% 58%, #000 0%, transparent 72%);
+    will-change: transform, opacity;
+    transform: translate3d(calc(-62% + var(--db-x, 0vw) * 0.85), calc(-46% + var(--db-y, 0px) * 0.5), 0) scale(calc(0.95 + var(--fx-p, 0.5) * 0.22));
+}
+
+.eo-driveby-mud img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Layer 7: Crisp Transparent Cutout Buggy jumping across the viewport */
+.eo-driveby-buggy {
+    position: absolute;
+    top: 56%;
+    left: 50%;
+    width: min(74vw, 840px);
+    z-index: 5;
+    pointer-events: none;
+    will-change: transform;
+    transform: translate3d(calc(-50% + var(--db-x, 0vw)), calc(-50% + var(--db-y, -32px)), 0)
+               rotate(var(--db-rot, -2deg))
+               scale(var(--db-scale, 1.04));
+    filter: drop-shadow(0 28px 36px rgba(0, 0, 0, 0.72));
+}
+
+.eo-driveby-buggy img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Layer 8: Bottom Progress Track Indicator */
+.eo-driveby-track {
+    position: relative;
+    z-index: 6;
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: rgba(244, 237, 228, 0.68);
+}
+
+.eo-driveby-line {
+    flex: 1;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.14);
+    border-radius: 999px;
+    overflow: hidden;
+    position: relative;
+}
+
+.eo-driveby-line .fx-db-line {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, var(--main), var(--amber));
+    transform-origin: 0 50%;
+    transform: scaleX(var(--fx-p, 0));
+    will-change: transform;
+}
+
+/* ==========================================================================
+   4. SECTION WATERMARK BIGTEXT (#garaz .eo-bigtext)
+   ========================================================================== */
+.eo-has-bigtext {
+    overflow: clip;
+}
+
+.eo-bigtext {
+    position: absolute;
+    bottom: -0.08em;
+    left: 50%;
+    z-index: 1;
+    pointer-events: none;
+    white-space: nowrap;
+    font-family: var(--font-headers);
+    font-size: clamp(6rem, 16vw, 15rem);
+    font-weight: 800;
+    font-style: italic;
+    text-transform: uppercase;
+    line-height: 0.85;
+    letter-spacing: -0.02em;
+    color: rgba(255, 255, 255, 0.035);
+    will-change: transform;
+    transform: translate3d(calc(-50% + (0.5 - var(--fx-p, 0.5)) * 20vw), 0, 0);
+}
+
+/* ==========================================================================
+   5. VERTICAL STEPS TIMELINE PROGRESS (#jak_zazitek_probiha .eo-steps)
+   ========================================================================== */
+.eo-steps {
+    position: relative;
+    padding-left: 1.75rem;
+}
+
+.eo-steps-line {
+    position: absolute;
+    left: 0;
+    top: 1.6rem;
+    bottom: 1.6rem;
+    width: 2px;
+    background: rgba(28, 17, 14, 0.1);
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.eo-steps-line .fx-steps-fill {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: var(--main);
+    transform-origin: 50% 0;
+    transform: scaleY(var(--fx-p, 0));
+    will-change: transform;
+}
+
+/* ==========================================================================
+   6. SCROLL-DRIVEN PARALLAX ON ROUNDED MEDIA & FULL-BLEED BANNER
+   ========================================================================== */
+.eo-media-rounded img {
+    will-change: transform;
+    transform: translate3d(0, calc((var(--fx-p, 0.5) - 0.5) * -13%), 0) scale(1.16);
+}
+
+.fx-banner-img {
+    will-change: transform;
+    transform: translate3d(0, calc((var(--fx-p, 0.5) - 0.5) * -18%), 0) scale(1.1);
+}
+
+/* ==========================================================================
+   7. SCROLL-TRIGGERED SECTION REVEALS & STAGGERED ENTRANCES
+   ========================================================================== */
+html.fx-js .eo-reveal {
+    opacity: 0;
+    transform: translate3d(0, 34px, 0);
+    transition:
+        opacity 0.85s var(--ease-out-expo),
+        transform 0.85s var(--ease-out-expo);
+    transition-delay: calc(var(--i, 0) * 0.09s);
+    will-change: opacity, transform;
+}
+
+html.fx-js .eo-reveal.is-inview {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+}
+
+/* Section Headline Split-Line Scroll Reveal */
+html.fx-js .eo-section-title.is-split .eo-line-inner {
+    transform: translate3d(0, 110%, 0);
+    transition: transform 0.95s var(--ease-out-expo);
+    transition-delay: calc(var(--i, 0) * 0.11s);
+}
+
+html.fx-js .eo-section-title.is-split.is-inview .eo-line-inner {
+    transform: translate3d(0, 0, 0);
+}
+
+/* Media Container Curtain Reveal */
+html.fx-js .eo-media-rounded {
+    opacity: 0;
+    transform: translate3d(0, 28px, 0) scale(0.975);
+    transition:
+        opacity 0.9s var(--ease-out-expo),
+        transform 0.9s var(--ease-out-expo),
+        box-shadow 0.35s ease;
+}
+
+html.fx-js .eo-media-rounded.is-inview {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+}
+
+/* 3D Perspective Hover Tilt Support on Minimalist Cards */
+.eo-card-minimal {
+    --rx: 0deg;
+    --ry: 0deg;
+    transform-style: preserve-3d;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    html.fx-js .eo-card-minimal.is-inview:hover {
+        transform: perspective(1000px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(-6px);
+    }
+
+    .eo-btn-primary {
+        --mx: 0px;
+        --my: 0px;
+        transform: translate3d(var(--mx, 0px), var(--my, 0px), 0);
+    }
+
+    .eo-btn-primary:hover {
+        transform: translate3d(var(--mx, 0px), calc(var(--my, 0px) - 2px), 0);
+    }
+}
+
+/* ==========================================================================
+   8. RESPONSIVE & REDUCED MOTION SAFEGUARDS
+   ========================================================================== */
+@media (max-width: 767.98px) {
+    .eo-driveby {
+        height: 165vh;
+    }
+
+    .eo-driveby-sticky {
+        padding: 5.25rem 0 2rem;
+    }
+
+    .eo-driveby-buggy {
+        width: 92vw;
+        top: 58%;
+    }
+
+    .eo-driveby-shadow {
+        width: 78vw;
+        bottom: 16%;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+
+    .eo-driveby {
+        height: auto;
+    }
+
+    .eo-driveby-sticky {
+        position: relative;
+        height: 80vh;
+    }
+
+    html.fx-js .eo-reveal,
+    html.fx-js .eo-media-rounded,
+    html.fx-js .eo-section-title.is-split .eo-line-inner {
+        opacity: 1 !important;
+        transform: none !important;
+    }
+
+    .fx-hero-img,
+    .fx-hero-content,
+    .eo-driveby-buggy,
+    .eo-driveby-bg,
+    .eo-driveby-bigtext,
+    .eo-bigtext,
+    .eo-media-rounded img,
+    .fx-banner-img {
+        transform: none !important;
+        opacity: 1 !important;
+    }
+}
