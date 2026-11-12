@@ -211,9 +211,10 @@
                     const p = clamp((vh * 0.15 - rect.top) / totalRunway, 0, 1);
                     const arc = Math.sin(p * Math.PI); // 0 -> 1 (apex) -> 0
 
-                    const dbX = ((p - 0.5) * 72).toFixed(2) + 'vw';
+                    // Reverse direction: moves from right to left as user scrolls down
+                    const dbX = ((0.5 - p) * 72).toFixed(2) + 'vw';
                     const dbY = (-arc * 64 + (1 - p) * 14).toFixed(1) + 'px';
-                    const dbRot = (-8.5 + p * 15).toFixed(2) + 'deg';
+                    const dbRot = (8.5 - p * 15).toFixed(2) + 'deg';
                     const dbScale = (0.96 + arc * 0.11).toFixed(3);
                     const shadowScale = (1 - arc * 0.34).toFixed(3);
 
